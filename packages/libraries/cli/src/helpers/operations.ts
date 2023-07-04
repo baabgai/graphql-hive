@@ -26,6 +26,7 @@ export async function loadOperations(
 > {
   const shouldNormalize = options?.normalize ?? true;
   const pluckModules = options?.pluckModules;
+  const pluckGlobalGqlIdentifierName = options?.pluckGlobalGqlIdentifierName;
 
   if (file.toLowerCase().endsWith('.json')) {
     const output: Record<string, string> = JSON.parse(await fs.readFile(file, 'utf8'));
@@ -59,15 +60,12 @@ export async function loadOperations(
   const sources = await loadDocuments(file, {
     cwd,
     loaders: [
-      new CodeFileLoader(
-        pluckModules
-          ? {
-              pluckConfig: {
-                modules: pluckModules,
-              },
-            }
-          : undefined,
-      ),
+      new CodeFileLoader({
+        pluckConfig: {
+          modules: pluckModules,
+          globalGqlIdentifierName: pluckGlobalGqlIdentifierName,
+        },
+      }),
       new GraphQLFileLoader(),
     ],
   });
